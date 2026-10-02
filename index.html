@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Real-time MongoDB Chart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 20px; }
+    .wrap { max-width: 900px; margin: auto; }
+    canvas { width: 100%; height: 420px; }
+    .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+    input, button { padding: 8px 10px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Real-time Sensor Readings (MongoDB → SSE → Chart.js)</h2>
+    <div class="toolbar">
+      <input id="val" type="number" step="0.1" placeholder="Enter value e.g. 25.6" />
+      <button id="send">Insert Reading</button>
+      <span id="status">Connecting…</span>
+    </div>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('chart');
+    const labels = [];
+    const data = { labels, datasets: [{ label: 'Value', data: [] }] };
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data,
+      options: {
+        animation: false,
+        scales: { x: { ticks: { maxRotation: 0, autoSkip: true } } }
+      }
+    });
+
+    // SSE connection
+    const es = new EventSource('/stream/readings');
+    const status = document.getElementById('status');
+    es.onopen = () => status.textContent = 'Live connected';
+    es.onerror = () => status.textContent = 'Disconnected (retrying…)';
+    es.onmessage = (e) => {
+      try {
+        const { timestamp, value } = JSON.parse(e.data);
+        // label: timestamp string, data point: value
+        labels.push(new Date(timestamp).toLocaleTimeString());
+        data.datasets[0].data.push(value);
+        if (labels.length > 50) { labels.shift(); data.datasets[0].data.shift(); }
+        chart.update();
+      } catch (err) {
+        // For container mapping we may receive raw maps; handle both.
+        const obj = typeof e.data === 'string' ? e.data : '';
+      }
+    };
+
+    // Quick insert for demo
+    document.getElementById('send').onclick = async () => {
+      const v = parseFloat(document.getElementById('val').value);
+      if (isNaN(v)) return alert('Enter a numeric value');
+      await fetch('/api/readings?value=' + encodeURIComponent(v), { method: 'POST' });
+      document.getElementById('val').value = '';
+    };
+  </script>
+</body>
+</html>
