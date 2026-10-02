@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .form-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+  <script>
+    function validateForm() {
+      let name = document.forms["regForm"]["name"].value;
+      let email = document.forms["regForm"]["email"].value;
+      let phone = document.forms["regForm"]["phone"].value;
+      let password = document.forms["regForm"]["password"].value;
+
+      if (name == "") {
+        alert("Name must be filled out");
+        return false;
+      }
+
+      let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+      if (!email.match(emailPattern)) {
+        alert("Invalid email format");
+        return false;
+      }
+
+      let phonePattern = /^[0-9]{10}$/;
+      if (!phone.match(phonePattern)) {
+        alert("Phone number must be 10 digits");
+        return false;
+      }
+
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters long");
+        return false;
+      }
+
+      alert("Registration Successful!");
+      return true;
+    }
+  </script>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Registration Form</h2>
+    <form name="regForm" onsubmit="return validateForm()">
+      <input type="text" name="name" placeholder="Enter your name">
+      <input type="email" name="email" placeholder="Enter your email">
+      <input type="text" name="phone" placeholder="Enter phone number">
+      <input type="password" name="password" placeholder="Enter password">
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</body>
+</html>
+
