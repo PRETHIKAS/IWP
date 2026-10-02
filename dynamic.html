@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic DOM Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    #container {
+      margin-top: 20px;
+      padding: 10px;
+      border: 2px solid #333;
+      min-height: 100px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h2>Dynamic DOM Manipulation</h2>
+  <button onclick="addElement()">Add Element</button>
+  <button onclick="removeElement()">Remove Element</button>
+  <button onclick="modifyElement()">Modify Element</button>
+
+  <div id="container">
+    <p id="para1">This is the first paragraph.</p>
+  </div>
+
+  <script>
+    function addElement() {
+      let newPara = document.createElement("p");
+      newPara.textContent = "New paragraph added dynamically!";
+      document.getElementById("container").appendChild(newPara);
+    }
+
+    function removeElement() {
+      let container = document.getElementById("container");
+      if (container.lastChild) {
+        container.removeChild(container.lastChild);
+      }
+    }
+
+    function modifyElement() {
+      let para = document.getElementById("para1");
+      para.textContent = "This paragraph has been modified!";
+      para.style.color = "red";
+      para.style.fontWeight = "bold";
+    }
+  </script>
+</body>
+</html>
